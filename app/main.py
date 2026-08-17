@@ -101,6 +101,11 @@ async def stats():
     return await db.get_stats()
 
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "service": "LinkPlease Automation", "docs": "/docs"}
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "v2"}
