@@ -42,9 +42,13 @@ async def shutdown() -> None:
 def _verify_signature(raw_body: bytes, header_value: str | None) -> bool:
     if not header_value:
         return True
+    key = PSEUDOGRAM_API_KEY.strip()
     given = header_value.split("=", 1)[1] if header_value.startswith("sha256=") else header_value
-    expected = hmac.new(PSEUDOGRAM_API_KEY.encode(), raw_body, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(given.strip(), expected.strip())
+    expected = hmac.new(key.encode("utf-8"), raw_body, hashlib.sha256).hexdigest()
+    matched = hmac.compare_digest(given.strip(), expected.strip())
+    if not matched:
+        log.warning(f"Signature mismatch! Given: {given.strip()} vs Expected: {expected.strip()} using key prefix {key[:8]} (len={len(key)})")
+    return matched
 
 
 @app.post("/webhook")
@@ -54,7 +58,6 @@ async def webhook(request: Request):
     if REQUIRE_SIGNATURE:
         sig = request.headers.get("X-PseudoGram-Signature") or request.headers.get("x-pseudogram-signature")
         if sig and not _verify_signature(raw_body, sig):
-            log.warning(f"Signature mismatch! Sig: {sig}")
             raise HTTPException(status_code=401, detail="invalid signature")
 
     try:
