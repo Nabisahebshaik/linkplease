@@ -65,7 +65,7 @@ curl -X POST https://pseudogram-api.onrender.com/v1/simulate/start \
   -d '{"webhook_url": "https://your-deployed-url/webhook", "count": 500, "duration_seconds": 10}'
 
 # then, after it finishes:
-curl https://your-deployed-url/stats
+curl [https://your-deployed-url/stats](https://linkplease-cypn.onrender.com/)
 curl https://pseudogram-api.onrender.com/v1/simulate/{run_id}/truth -H "X-API-Key: $PSEUDOGRAM_API_KEY"
 ```
 
