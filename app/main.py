@@ -40,11 +40,11 @@ async def shutdown() -> None:
 # ------------------------------------------------------------- /webhook ----
 
 def _verify_signature(raw_body: bytes, header_value: str | None) -> bool:
-    if not header_value or not header_value.startswith("sha256="):
+    if not header_value:
         return False
-    given = header_value.split("=", 1)[1]
+    given = header_value.split("=", 1)[1] if header_value.startswith("sha256=") else header_value
     expected = hmac.new(PSEUDOGRAM_API_KEY.encode(), raw_body, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(given, expected)
+    return hmac.compare_digest(given.strip(), expected.strip())
 
 
 @app.post("/webhook")
@@ -54,6 +54,7 @@ async def webhook(request: Request):
     if REQUIRE_SIGNATURE:
         sig = request.headers.get("X-PseudoGram-Signature")
         if not _verify_signature(raw_body, sig):
+            log.warning(f"Signature mismatch! Sig: {sig}, Key configured: {bool(PSEUDOGRAM_API_KEY)}")
             # Reject forged/garbled requests. Still fast, still well under 5s.
             raise HTTPException(status_code=401, detail="invalid signature")
 
