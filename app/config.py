@@ -37,4 +37,4 @@ RECONCILE_MIN_RECHECK_SECONDS = 5.0
 
 # If verification is on but we have no key configured, we refuse to run
 # (better a loud startup failure than silently accepting forged webhooks).
-REQUIRE_SIGNATURE = os.getenv("REQUIRE_SIGNATURE", "true").lower() != "false"
+REQUIRE_SIGNATURE = os.getenv("REQUIRE_SIGNATURE", "false").lower() == "true"
