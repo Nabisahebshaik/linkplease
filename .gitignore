@@ -5,3 +5,7 @@ __pycache__/
 linkplease.db
 linkplease.db-wal
 linkplease.db-shm
+dataset/
+train.csv
+vgg16_model.h5
+metrics/
