@@ -57,6 +57,32 @@ guarantee — resets too. Render/Railway free tiers are usually fine for the
 duration of a grading run, but mount a persistent disk if you want it to
 survive redeploys.
 
+## Diabetic retinopathy pipeline (VS Code workflow)
+
+The DR pipeline runs locally from the VS Code terminal; Streamlit is optional
+and can be added later as a deployment UI.
+
+```powershell
+py -3 -m src.train `
+  --dataset-dir C:\Users\shaik\Downloads\DR1\colored_images `
+  --labels-csv C:\Users\shaik\Downloads\DR1\train.csv
+
+py -3 dr_cli.py C:\Users\shaik\Downloads\DR1\colored_images\Mild\0024cdab0c1e.png `
+  --report metrics\sample_report.html
+```
+
+The terminal workflow performs quality gating, preprocessing, model inference,
+Grad-CAM generation, lesion candidate analysis, triage output, and optional
+HTML report generation.
+
+### Build the evaluation matrix
+
+Run this after training to generate the confusion matrix and per-class metrics:
+
+```powershell
+py -3 evaluate_model.py
+```
+
 here is the Test queued stuff
 
 ```bash
